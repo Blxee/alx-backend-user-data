@@ -30,9 +30,8 @@ class RedactingFormatter(logging.Formatter):
 
     def format(self, record: logging.LogRecord) -> str:
         """Formats fields of record."""
-        return filter_datum(self.fields, self.REDACTION, self.FORMAT % {
-            'name': record.name, 'levelname': record.levelname,
-            'asctime': record.asctime, 'message': record.msg}, self.SEPARATOR)
+        message = super(RedactingFormatter, self).format(record)
+        return filter_datum(self.fields, self.REDACTION, message, self.SEPARATOR)
 
 
 def get_logger() -> logging.Logger:
@@ -54,3 +53,15 @@ def get_db() -> mysql.connector.connection.MySQLConnection:
     return mysql.connector.connect(
         user=user, password=password, host=host, database=database
     )
+
+
+def main() -> None:
+    logger = get_logger()
+    with get_db() as db:
+        with db.cursor() as cursor:
+            cursor.execute("SELECT * FROM users;")
+            for row in cursor:
+                logger.info(RedactingFormatter.SEPARATOR.join(row))
+
+if __name__ == '__main__':
+    main()
