@@ -4,12 +4,13 @@ import logging
 import mysql.connector
 from os import environ
 import re
+from typing import List
 
 
 PII_FIELDS = ['name', 'email', 'phone', 'ssn', 'password']
 
 
-def filter_datum(fields: list[str], redaction: str,
+def filter_datum(fields: List[str], redaction: str,
                  message: str, separator: str) -> str:
     """Returns the log message obfuscated."""
     return re.sub(
@@ -25,7 +26,7 @@ class RedactingFormatter(logging.Formatter):
     FORMAT = "[HOLBERTON] %(name)s %(levelname)s %(asctime)-15s: %(message)s"
     SEPARATOR = ";"
 
-    def __init__(self, fields: list[str]):
+    def __init__(self, fields: List[str]):
         self.fields = fields
         super(RedactingFormatter, self).__init__(self.FORMAT)
 
