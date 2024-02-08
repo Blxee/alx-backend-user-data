@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Main tasks module."""
 import logging
+import mysql.connector
+from os import environ
 import re
 
 
@@ -41,3 +43,14 @@ def get_logger() -> logging.Logger:
     handler.setFormatter(RedactingFormatter(PII_FIELDS))
     logger.addHandler(handler)
     return logger
+
+
+def get_db() -> mysql.connector.connection.MySQLConnection:
+    """Establishes a conection to mysql database and returns it."""
+    user = environ.get('PERSONAL_DATA_DB_USERNAME', 'root')
+    password = environ.get('PERSONAL_DATA_DB_PASSWORD', '')
+    host = environ.get('PERSONAL_DATA_DB_HOST', 'localhost')
+    database = environ.get('PERSONAL_DATA_DB_NAME')
+    return mysql.connector.connect(
+        user=user, password=password, host=host, database=database
+    )
