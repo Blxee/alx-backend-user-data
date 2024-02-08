@@ -59,6 +59,7 @@ def get_db() -> mysql.connector.connection.MySQLConnection:
 
 
 def main() -> None:
+    """Main function when the script is run."""
     logger = get_logger()
     with get_db() as db:
         with db.cursor() as cursor:
