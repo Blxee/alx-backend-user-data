@@ -2,6 +2,7 @@
 """Module for the Auth class"""
 from flask import request
 from typing import List, TypeVar
+import re
 
 
 class Auth:
@@ -12,9 +13,10 @@ class Auth:
         if path is None or excluded_paths is None:
             return True
         path = path.rstrip('/')
-        excluded_paths = [p.rstrip('/') for p in excluded_paths]
-        if path in excluded_paths:
-            return False
+        excluded_paths = [p.rstrip('/*') for p in excluded_paths]
+        for pat in excluded_paths:
+            if re.match(pat, path):
+                return False
         else:
             return True
 
