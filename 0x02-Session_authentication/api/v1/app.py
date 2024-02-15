@@ -10,6 +10,7 @@ from api.v1.auth.session_auth import (
     login_view,
     logout_view
 )
+from api.v1.auth.session_db_auth import SessionDBAuth
 from api.v1.auth.session_exp_auth import SessionExpAuth
 from api.v1.views import app_views
 from flask import Flask, jsonify, abort, request
@@ -25,6 +26,8 @@ elif getenv('AUTH_TYPE') == 'session_auth':
     auth = SessionAuth()
 elif getenv('AUTH_TYPE') == 'session_exp_auth':
     auth = SessionExpAuth()
+elif getenv('AUTH_TYPE') == 'session_db_auth':
+    auth = SessionDBAuth()
 elif getenv('AUTH_TYPE') is not None:
     auth = Auth()
 
