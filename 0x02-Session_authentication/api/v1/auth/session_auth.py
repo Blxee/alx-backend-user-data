@@ -56,21 +56,22 @@ class SessionAuth(Auth):
         del self.user_id_by_session_id[session_id]
         return True
 
+
 @app_views.route('/auth_session/login', methods=['POST'], strict_slashes=False)
 def login_view():
     """The login route."""
     email = request.form.get('email')
     if email is None or email == '':
-        return jsonify({ "error": "email missing" }), 400
+        return jsonify({"error": "email missing"}), 400
     password = request.form.get('password')
     if password is None or password == '':
-        return jsonify({ "error": "password missing" }), 400
+        return jsonify({"error": "password missing"}), 400
     users = User.search({'email': email})
     if len(users) == 0:
-        return jsonify({ "error": "no user found for this email" }), 404
+        return jsonify({"error": "no user found for this email"}), 404
     user = users[0]
     if not user.is_valid_password(password):
-        return jsonify({ "error": "wrong password" }), 401
+        return jsonify({"error": "wrong password"}), 401
     auth = SessionAuth.lastest_instance
     session_id = auth.create_session(user.id)
     response = jsonify(user.to_json())
@@ -78,7 +79,9 @@ def login_view():
     return response
 
 
-@app_views.route('/auth_session/logout', methods=['DELETE'], strict_slashes=False)
+@app_views.route('/auth_session/logout',
+                 methods=['DELETE'],
+                 strict_slashes=False)
 def logout_view():
     """The logout route."""
     auth = SessionAuth.lastest_instance
