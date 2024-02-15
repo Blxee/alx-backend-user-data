@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 """Module for the SessionAuth class."""
+from os import getenv
+from flask import jsonify, request
 from api.v1.auth.auth import Auth
 from uuid import uuid4
-
 from models.user import User
+from api.v1.views import app_views
 
 
 class SessionAuth(Auth):
@@ -35,3 +37,24 @@ class SessionAuth(Auth):
         if user_id is None:
             return None
         return User.get(user_id)
+
+
+@app_views.route('/auth_session/login', methods=['POST'], strict_slashes=False)
+def login_view():
+    email = request.form.get('email')
+    if email is None or email == '':
+        return jsonify({ "error": "email missing" }), 400
+    password = request.form.get('password')
+    if password is None or password == '':
+        return jsonify({ "error": "password missing" }), 400
+    users = User.search({'email': email})
+    if len(users) == 0:
+        return jsonify({ "error": "no user found for this email" }), 404
+    user = users[0]
+    if not user.is_valid_password(password):
+        return jsonify({ "error": "wrong password" }), 401
+    from api.v1.app import auth
+    session_id = auth.create_session(user.id)
+    response = jsonify(user.to_json())
+    response.set_cookie(getenv('SESSION_NAME'), session_id)
+    return response
