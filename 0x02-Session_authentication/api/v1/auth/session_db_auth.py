@@ -5,7 +5,7 @@ from models.user_session import UserSession
 
 
 class SessionDBAuth(SessionExpAuth):
-    pass
+    """Class declaration for SessionDBAuth."""
 
     def create_session(self, user_id=None):
         """Creates a new session for a user id."""
