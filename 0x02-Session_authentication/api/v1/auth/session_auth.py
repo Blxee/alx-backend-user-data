@@ -10,7 +10,12 @@ from api.v1.views import app_views
 
 class SessionAuth(Auth):
     """SessionAuth class for handling session based authentication."""
+    lastest_instance = None
     user_id_by_session_id = {}
+
+    def __init__(self):
+        SessionAuth.lastest_instance = self
+        super().__init__()
 
     def create_session(self, user_id: str = None) -> str:
         """Creates a new session for a user id."""
@@ -41,6 +46,7 @@ class SessionAuth(Auth):
 
 @app_views.route('/auth_session/login', methods=['POST'], strict_slashes=False)
 def login_view():
+    """The login route."""
     email = request.form.get('email')
     if email is None or email == '':
         return jsonify({ "error": "email missing" }), 400
@@ -53,7 +59,7 @@ def login_view():
     user = users[0]
     if not user.is_valid_password(password):
         return jsonify({ "error": "wrong password" }), 401
-    from api.v1.app import auth
+    auth = SessionAuth.lastest_instance
     session_id = auth.create_session(user.id)
     response = jsonify(user.to_json())
     response.set_cookie(getenv('SESSION_NAME'), session_id)
