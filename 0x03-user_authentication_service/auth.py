@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Module for user authentication."""
+from typing import Optional
 import bcrypt
 from db import DB
 from user import User
@@ -44,7 +45,7 @@ class Auth:
         except (InvalidRequestError, NoResultFound):
             return False
 
-    def create_session(self, email: str) -> str:
+    def create_session(self, email: str) -> Optional[str]:
         """Creates and returns a session id for a user."""
         try:
             user = self._db.find_user_by(email=email)
