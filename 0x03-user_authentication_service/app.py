@@ -45,11 +45,20 @@ def logout():
     """Route for the user to logout."""
     session_id = request.cookies['session_id']
     user = AUTH.get_user_from_session_id(session_id)
-    if user is not None:
-        AUTH.destroy_session(user.id)
-        redirect('/')
-    else:
+    if user is None:
         return ('', 403)
+    AUTH.destroy_session(user.id)
+    redirect('/')
+
+
+@app.route('/profile', methods=['GET'], strict_slashes=False)
+def profile():
+    """Route for the signed-in user profile."""
+    session_id = request.cookies['session_id']
+    user = AUTH.get_user_from_session_id(session_id)
+    if user is None:
+        return ('', 403)
+    return jsonify({'email': user.email})
 
 
 if __name__ == "__main__":
