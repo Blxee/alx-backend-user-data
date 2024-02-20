@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Module of the main ."""
 from auth import Auth
-from flask import Flask, abort, jsonify, request
+from flask import Flask, abort, jsonify, request, redirect
 
 
 AUTH = Auth()
@@ -38,6 +38,18 @@ def login():
         return response
     else:
         abort(401)
+
+
+@app.route('/sessions', methods=['DELETE'], strict_slashes=False)
+def logout():
+    """Route for the user to logout."""
+    session_id = request.cookies['session_id']
+    user = AUTH.get_user_from_session_id(session_id)
+    if user is not None:
+        AUTH.destroy_session(user.id)
+        redirect('/')
+    else:
+        return ('', 403)
 
 
 if __name__ == "__main__":
