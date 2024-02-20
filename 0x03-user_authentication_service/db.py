@@ -51,10 +51,6 @@ class DB:
 
     def update_user(self, user_id: int, **kwargs) -> None:
         """Updates a user's fields in the database."""
-        set1 = set(kwargs.keys())
-        set2 = set(User.__dict__.keys())
-        if not set1.issubset(set2):
-            raise ValueError
         try:
             user = self.find_user_by(id=user_id)
             user.__dict__.update(**kwargs)
