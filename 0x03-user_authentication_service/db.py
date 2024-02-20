@@ -48,3 +48,16 @@ class DB:
         if user is None:
             raise NoResultFound
         return user
+
+    def update_user(self, user_id: int, **kwargs) -> None:
+        """Updates a user's fields in the database."""
+        set1 = set(kwargs.keys())
+        set2 = set(User.__dict__.keys())
+        if not set1.issubset(set2):
+            raise ValueError
+        try:
+            user = self.find_user_by(id=user_id)
+            user.__dict__.update(**kwargs)
+            self._session.commit()
+        except Exception:
+            raise ValueError
