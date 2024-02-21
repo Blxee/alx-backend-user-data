@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Module for user authentication."""
-from typing import Optional, TypeVar
+from typing import Optional
 import bcrypt
 from db import DB
 from user import User
@@ -55,7 +55,7 @@ class Auth:
         except (InvalidRequestError, NoResultFound):
             return None
 
-    def get_user_from_session_id(self, session_id: str) -> TypeVar('User'):
+    def get_user_from_session_id(self, session_id: str) -> Optional[User]:
         """Returns the corresponding user from a session id."""
         if session_id is None:
             return None
