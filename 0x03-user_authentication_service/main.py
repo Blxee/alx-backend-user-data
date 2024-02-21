@@ -6,17 +6,17 @@ import requests
 def register_user(email, passwd):
     """Test register user."""
     response = requests.post('localhost:5000/users',
-                  data={'email': email, 'password': passwd})
+                             data={'email': email, 'password': passwd})
     assert response.json() == {'email': email, 'message': 'user created'}
     response = requests.post('localhost:5000/users',
-                  data={'email': email, 'password': passwd})
+                             data={'email': email, 'password': passwd})
     assert response.json() == {'message': 'email already registered'}
 
 
 def log_in_wrong_password(email, new_passwd):
     """Test login with wrong password."""
     response = requests.post('localhost:5000/sessions',
-                  data={'email': email, 'password': new_passwd})
+                             data={'email': email, 'password': new_passwd})
     assert response.status_code == 401
 
 
