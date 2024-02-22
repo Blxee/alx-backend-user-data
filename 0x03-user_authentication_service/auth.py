@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Module for user authentication."""
-from typing import Optional
+from typing import Union
 import bcrypt
 from db import DB
 from user import User
@@ -45,17 +45,17 @@ class Auth:
         except (InvalidRequestError, NoResultFound):
             return False
 
-    def create_session(self, email: str) -> Optional[str]:
+    def create_session(self, email: str) -> Union[str, None]:
         """Creates and returns a session id for a user."""
         try:
             user = self._db.find_user_by(email=email)
             session_id = _generate_uuid()
             self._db.update_user(user.id, session_id=session_id)
             return session_id
-        except (InvalidRequestError, NoResultFound):
+        except (InvalidRequestError, NoResultFound, ValueError):
             return None
 
-    def get_user_from_session_id(self, session_id: str) -> Optional[User]:
+    def get_user_from_session_id(self, session_id: str) -> Union[User, None]:
         """Returns the corresponding user from a session id."""
         if session_id is None:
             return None
